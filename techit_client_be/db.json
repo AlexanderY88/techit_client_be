@@ -1,0 +1,115 @@
+{
+  "users": [
+    {
+      "name": "Mor Ashkenazi",
+      "email": "mor@gmail.com",
+      "password": "12345678",
+      "isAdmin": true,
+      "id": "1"
+    },
+    {
+      "name": "Israel Israeli",
+      "email": "israel@gmail.com",
+      "password": "12345678",
+      "isAdmin": false,
+      "id": "2"
+    },
+    {
+      "id": "a29b",
+      "email": "mormor@gmail.com",
+      "password": "12345678",
+      "name": "mor",
+      "isAdmin": false
+    },
+    {
+      "id": "329f",
+      "email": "margol@gmail.com",
+      "password": "12345678",
+      "name": "margol",
+      "isAdmin": false
+    }
+  ],
+  "products": [
+    {
+      "name": "Microsoft Earphones",
+      "price": 200,
+      "category": "Earphones & Headphones",
+      "description": "The Microsoft new earphones with high quality",
+      "image": "https://rukminim1.flixcart.com/image/416/416/k0flmkw0/headphone/u/2/h/queer-original-nokia-microsoft-wh-108-wired-headset-black-original-imafk8c6pjy2rhax.jpeg?q=70",
+      "id": "1",
+      "quantity": 10
+    },
+    {
+      "name": "Microsoft Headphones",
+      "price": 200,
+      "category": "Earphones & Headphones",
+      "description": "The Microsoft new earphones with high quality",
+      "image": "https://m.media-amazon.com/images/I/712lRY36XYS.jpg",
+      "id": "2",
+      "quantity": 12
+    },
+    {
+      "name": "Asus Vivobook",
+      "price": 3600,
+      "category": "Laptops",
+      "description": "Wondeful laptops",
+      "image": "https://www.asus.com/media/Odin/Websites/global/Series/12.png",
+      "id": "3",
+      "quantity": 2
+    },
+    {
+      "id": "081a",
+      "name": "mor",
+      "price": 65,
+      "category": "hghgh",
+      "description": "kkk",
+      "image": "https://git-scm.com/images/logo@2x.png",
+      "quantity": 0
+    }
+  ],
+  "carts": [
+    {
+      "id": "1",
+      "userId": "1",
+      "products": [],
+      "active": true
+    },
+    {
+      "id": "2",
+      "userId": "2",
+      "products": [],
+      "active": true
+    },
+    {
+      "id": "3",
+      "userId": "a29b",
+      "products": [],
+      "active": true
+    },
+    {
+      "id": "539e",
+      "userId": "329f",
+      "products": [
+        {
+          "name": "Microsoft Earphones",
+          "price": 200,
+          "category": "Earphones & Headphones",
+          "description": "The Microsoft new earphones with high quality",
+          "image": "https://rukminim1.flixcart.com/image/416/416/k0flmkw0/headphone/u/2/h/queer-original-nokia-microsoft-wh-108-wired-headset-black-original-imafk8c6pjy2rhax.jpeg?q=70",
+          "id": "1",
+          "quantity": 10
+        },
+        {
+          "name": "Asus Vivobook",
+          "price": 3600,
+          "category": "Laptops",
+          "description": "Wondeful laptops",
+          "image": "https://www.asus.com/media/Odin/Websites/global/Series/12.png",
+          "id": "3",
+          "quantity": 2
+        }
+      ],
+      "active": true
+    }
+  ]
+}
