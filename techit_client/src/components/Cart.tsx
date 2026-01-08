@@ -4,6 +4,7 @@ import Product from "../interfaces/Product";
 import { getUserCart, updateCartQuantity, removeFromCart } from "../services/cartsService";
 import { getAllProducts } from "../services/productsService";
 import CartInterface, { CartProduct } from "../interfaces/Cart";
+import './Cart.css';
 
 interface CartProps {}
 
@@ -126,7 +127,7 @@ const Cart: FunctionComponent<CartProps> = () => {
       <>
         <Navbar />
         <div className="container mt-4">
-          <div className="text-center">
+          <div className="cart-loading-spinner">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
@@ -139,11 +140,12 @@ const Cart: FunctionComponent<CartProps> = () => {
   return (
     <>
       <Navbar />
-      <div className="container mt-4">
-        <h2 className="mb-4 text-center">Your Shopping Cart</h2>
+      <div className="container cart-container mt-4">
+        <h2 className="mb-4 text-center cart-title">Your Shopping Cart</h2>
         
         {cartProducts.length === 0 ? (
-          <div className="text-center py-5">
+          <div className="cart-empty-state py-5">
+            <div className="cart-empty-icon">🛒</div>
             <h4 className="text-muted">Your cart is empty</h4>
             <p className="text-muted">Add some products to get started!</p>
           </div>
@@ -158,14 +160,14 @@ const Cart: FunctionComponent<CartProps> = () => {
                 
                 return (
                   <div key={cartProduct.productId} className="col-12">
-                    <div className="card">
-                      <div className="card-body">
-                        <div className="row align-items-center">
+                    <div className="card cart-item-hover">
+                      <div className="card-body cart-item-card">
+                        <div className="d-none d-md-flex row align-items-center">
                           <div className="col-md-2">
                             <img
                               src={product.image || "https://via.placeholder.com/100x100?text=No+Image"}
                               alt={product.name}
-                              className="img-fluid rounded"
+                              className="img-fluid rounded cart-item-image"
                               style={{ maxHeight: '80px', objectFit: 'cover' }}
                             />
                           </div>
@@ -175,12 +177,12 @@ const Cart: FunctionComponent<CartProps> = () => {
                             <small className="text-muted">Stock: {product.quantity}</small>
                           </div>
                           <div className="col-md-2">
-                            <strong className="text-primary">${product.price.toFixed(2)}</strong>
+                            <strong className="text-primary cart-item-price">${product.price.toFixed(2)}</strong>
                           </div>
                           <div className="col-md-3">
-                            <div className="d-flex align-items-center border rounded">
+                            <div className="d-flex align-items-center cart-quantity-controls">
                               <button
-                                className="btn btn-outline-secondary btn-sm border-0"
+                                className="btn btn-outline-secondary btn-sm border-0 cart-quantity-button"
                                 onClick={() => handleDecreaseQuantity(cartProduct)}
                                 disabled={isUpdating}
                                 style={{ borderRadius: '0.375rem 0 0 0.375rem' }}
@@ -188,13 +190,13 @@ const Cart: FunctionComponent<CartProps> = () => {
                                 <i className="bi bi-dash"></i>
                               </button>
                               <span 
-                                className="px-3 text-center" 
+                                className="px-3 text-center cart-quantity-display" 
                                 style={{ minWidth: '60px', backgroundColor: '#f8f9fa' }}
                               >
                                 {isUpdating ? '...' : cartProduct.quantity}
                               </span>
                               <button
-                                className="btn btn-outline-secondary btn-sm border-0"
+                                className="btn btn-outline-secondary btn-sm border-0 cart-quantity-button"
                                 onClick={() => handleIncreaseQuantity(cartProduct)}
                                 disabled={isUpdating || cartProduct.quantity >= (product.quantity || 0)}
                                 style={{ borderRadius: '0 0.375rem 0.375rem 0' }}
@@ -204,7 +206,53 @@ const Cart: FunctionComponent<CartProps> = () => {
                             </div>
                           </div>
                           <div className="col-md-1">
-                            <strong>${(product.price * cartProduct.quantity).toFixed(2)}</strong>
+                            <strong className="cart-item-total">${(product.price * cartProduct.quantity).toFixed(2)}</strong>
+                          </div>
+                        </div>
+                        
+                        {/* Mobile Layout */}
+                        <div className="d-md-none mobile-cart-layout">
+                          <div className="mobile-image-section">
+                            <img
+                              src={product.image || "https://via.placeholder.com/100x100?text=No+Image"}
+                              alt={product.name}
+                              className="img-fluid rounded cart-item-image"
+                              style={{ maxHeight: '60px', objectFit: 'cover' }}
+                            />
+                          </div>
+                          <div className="mobile-details-section cart-item-details">
+                            <h5 className="card-title mb-1">{product.name}</h5>
+                            <p className="text-muted mb-0">{product.category}</p>
+                            <small className="text-muted">Stock: {product.quantity}</small>
+                          </div>
+                          <div className="mobile-cart-row">
+                            <div className="mobile-price-section">
+                              <strong className="text-primary cart-item-price">${product.price.toFixed(2)}</strong>
+                            </div>
+                            <div className="mobile-total-section">
+                              <strong className="cart-item-total">${(product.price * cartProduct.quantity).toFixed(2)}</strong>
+                            </div>
+                          </div>
+                          <div className="mobile-quantity-section">
+                            <div className="d-flex align-items-center cart-quantity-controls justify-content-center">
+                              <button
+                                className="btn btn-outline-secondary cart-quantity-button"
+                                onClick={() => handleDecreaseQuantity(cartProduct)}
+                                disabled={isUpdating}
+                              >
+                                <i className="bi bi-dash"></i>
+                              </button>
+                              <span className="cart-quantity-display">
+                                {isUpdating ? '...' : cartProduct.quantity}
+                              </span>
+                              <button
+                                className="btn btn-outline-secondary cart-quantity-button"
+                                onClick={() => handleIncreaseQuantity(cartProduct)}
+                                disabled={isUpdating || cartProduct.quantity >= (product.quantity || 0)}
+                              >
+                                <i className="bi bi-plus"></i>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -215,8 +263,8 @@ const Cart: FunctionComponent<CartProps> = () => {
             </div>
             
             <div className="row mt-4">
-              <div className="col-md-6 offset-md-6">
-                <div className="card">
+              <div className="col-12 col-lg-6 offset-lg-6">
+                <div className="card cart-summary">
                   <div className="card-body">
                     <h5 className="card-title">Order Summary</h5>
                     <div className="d-flex justify-content-between">
@@ -228,7 +276,7 @@ const Cart: FunctionComponent<CartProps> = () => {
                       <strong>Total Price:</strong>
                       <strong>${getTotalPrice().toFixed(2)}</strong>
                     </div>
-                    <button className="btn btn-success w-100 mt-3">
+                    <button className="btn btn-success w-100 cart-checkout-btn">
                       Proceed to Checkout
                     </button>
                   </div>

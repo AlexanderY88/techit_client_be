@@ -1,0 +1,432 @@
+/* Global Mobile Responsive Styles for TechIt App */
+
+/* Base font size and viewport optimizations */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container responsive adjustments */
+.container,
+.container-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (max-width: 575.98px) {
+  .container,
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Navbar mobile improvements */
+.navbar {
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 575.98px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+/* Button improvements for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .btn-sm {
+    min-height: 40px;
+    min-width: 40px;
+  }
+  
+  .btn-lg {
+    min-height: 48px;
+    font-size: 1.125rem;
+  }
+}
+
+/* Form controls mobile optimization */
+@media (max-width: 575.98px) {
+  .form-control,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem;
+    min-height: 44px;
+  }
+  
+  .form-label {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Card responsive improvements */
+@media (max-width: 575.98px) {
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+  
+  .card-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+}
+
+/* Modal mobile improvements */
+@media (max-width: 575.98px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+  
+  .modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* Table responsive improvements */
+@media (max-width: 767.98px) {
+  .table-responsive {
+    border: none;
+  }
+  
+  .table {
+    font-size: 0.875rem;
+  }
+  
+  .table td,
+  .table th {
+    padding: 0.5rem;
+    white-space: nowrap;
+  }
+}
+
+/* Alert mobile improvements */
+@media (max-width: 575.98px) {
+  .alert {
+    border-radius: 8px;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .alert-dismissible .btn-close {
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* Badge and pill improvements */
+@media (max-width: 575.98px) {
+  .badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+  }
+  
+  .badge.rounded-pill {
+    padding-right: 0.8em;
+    padding-left: 0.8em;
+  }
+}
+
+/* Dropdown mobile improvements */
+@media (max-width: 575.98px) {
+  .dropdown-menu {
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  .dropdown-item:hover,
+  .dropdown-item:focus {
+    background-color: rgba(13, 110, 253, 0.1);
+  }
+}
+
+/* Spacing utilities for mobile */
+@media (max-width: 575.98px) {
+  .mt-mobile-3 {
+    margin-top: 1rem !important;
+  }
+  
+  .mb-mobile-3 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mx-mobile-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  .px-mobile-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .py-mobile-3 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+/* Typography improvements */
+@media (max-width: 575.98px) {
+  h1 {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+    line-height: 1.4;
+  }
+  
+  h4 {
+    font-size: 1.15rem;
+    line-height: 1.5;
+  }
+  
+  h5 {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  
+  p, .card-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  small, .small {
+    font-size: 0.85rem;
+  }
+}
+
+/* Loading spinner improvements */
+@media (max-width: 575.98px) {
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .spinner-border-sm {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (max-width: 575.98px) {
+  /* Ensure touch targets are at least 44px */
+  .btn,
+  .btn-close,
+  .form-check-input,
+  .form-control,
+  .form-select,
+  a:not(.nav-link):not(.dropdown-item) {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Improve focus indicators */
+  .btn:focus,
+  .form-control:focus,
+  .form-select:focus,
+  a:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+}
+
+/* Custom utilities for mobile */
+@media (max-width: 575.98px) {
+  .mobile-center {
+    text-align: center !important;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+  }
+  
+  .mobile-hidden {
+    display: none !important;
+  }
+  
+  .mobile-block {
+    display: block !important;
+  }
+  
+  .mobile-flex {
+    display: flex !important;
+  }
+  
+  .mobile-column {
+    flex-direction: column !important;
+  }
+  
+  .mobile-gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  .mobile-gap-3 {
+    gap: 1rem !important;
+  }
+}
+
+/* Scroll behavior improvements */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 575.98px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Image responsive improvements */
+@media (max-width: 575.98px) {
+  img {
+    height: auto;
+    max-width: 100%;
+  }
+  
+  .img-fluid {
+    border-radius: 8px;
+  }
+}
+
+/* Grid system improvements for mobile */
+@media (max-width: 575.98px) {
+  .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+  
+  .row > * {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .g-3 > *,
+  .gx-3 > * {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .g-3,
+  .gy-3 {
+    margin-top: -0.75rem;
+  }
+  
+  .g-3 > *,
+  .gy-3 > * {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Animation performance improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode improvements for mobile */
+@media (prefers-color-scheme: dark) and (max-width: 575.98px) {
+  .card {
+    background-color: #212529;
+    border-color: #495057;
+    color: #fff;
+  }
+  
+  .card-body {
+    color: #fff;
+  }
+  
+  .text-muted {
+    color: #adb5bd !important;
+  }
+  
+  .text-secondary {
+    color: #6c757d !important;
+  }
+}

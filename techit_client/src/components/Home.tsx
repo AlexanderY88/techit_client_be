@@ -229,14 +229,14 @@ const Home: FunctionComponent<HomeProps> = () => {
   return (
     <>
       <Navbar />
-      <div className="container-fluid px-3 px-md-4 mt-4">
+      <div className="container-fluid home-container px-3 px-md-4 mt-4">
         <div className="row">
           <div className="col-12">
-            <div className="d-flex justify-content-between align-items-center mb-3 mb-md-4">
-              <h2 className="mb-0 text-center text-md-start">Our Products</h2>
+            <div className="d-flex justify-content-between align-items-center mb-3 mb-md-4 admin-controls">
+              <h2 className="mb-0 text-center text-md-start home-title">Our Products</h2>
               {currentUser?.isAdmin && (
                 <button
-                  className="btn btn-success btn-sm"
+                  className="btn btn-success btn-sm admin-add-btn d-none d-md-inline-block"
                   onClick={handleAddProduct}
                 >
                   <i className="bi bi-plus-circle me-1"></i>
@@ -244,11 +244,22 @@ const Home: FunctionComponent<HomeProps> = () => {
                 </button>
               )}
             </div>
+            {currentUser?.isAdmin && (
+              <div className="d-md-none mb-3">
+                <button
+                  className="btn btn-success admin-add-btn w-100"
+                  onClick={handleAddProduct}
+                >
+                  <i className="bi bi-plus-circle me-2"></i>
+                  Add New Product
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
         {loading && (
-          <div className="loading-container">
+          <div className="home-loading-spinner">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
@@ -261,18 +272,21 @@ const Home: FunctionComponent<HomeProps> = () => {
           </div>
         )}
 
-        <div className="row g-3 g-md-4">
+        <div className="row g-3 g-md-4 home-product-grid d-none d-md-flex">
           {products.map((product) => (
             <div key={product.id} className="col-12 col-sm-6 col-lg-4 col-xl-3">
-              <div className="card product-card h-100">
-                <img
-                  src={product.image || "https://via.placeholder.com/300x200?text=No+Image"}
-                  className="card-img-top product-image"
-                  alt={product.name}
-                />
-                <div className="card-body d-flex flex-column p-3 p-md-4">
-                  <h5 className="card-title mb-2 fs-6 fs-md-5">{product.name}</h5>
-                  <p className="card-text product-category text-muted mb-2">{product.category}</p>
+              <div className="card product-card home-product-card h-100">
+                <div className="home-product-image-container">
+                  <img
+                    src={product.image || "https://via.placeholder.com/300x200?text=No+Image"}
+                    className="card-img-top product-image home-product-image"
+                    alt={product.name}
+                  />
+                  <div className="home-product-image-overlay"></div>
+                </div>
+                <div className="card-body d-flex flex-column p-3 p-md-4 home-product-body">
+                  <h5 className="card-title mb-2 fs-6 fs-md-5 home-product-title">{product.name}</h5>
+                  <p className="card-text product-category text-muted mb-2 home-product-category">{product.category}</p>
                   <p className="card-text product-description text-secondary flex-grow-1 mb-3 small">
                     {product.description?.length > 80 
                       ? product.description.substring(0, 80) + "..."
@@ -280,9 +294,11 @@ const Home: FunctionComponent<HomeProps> = () => {
                   </p>
                   <div className="mt-auto">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <span className="product-price text-primary mb-0 fw-bold">${product.price.toFixed(2)}</span>
+                      <span className="product-price home-product-price text-primary mb-0 fw-bold">${product.price.toFixed(2)}</span>
                       {product.quantity !== undefined && (
-                        <small className="product-stock text-muted">Stock: {product.quantity}</small>
+                        <small className={`product-stock home-product-stock text-muted ${product.quantity <= 5 ? 'home-stock-low' : product.quantity <= 20 ? 'home-stock-medium' : 'home-stock-good'}`}>
+                          Stock: {product.quantity}
+                        </small>
                       )}
                     </div>
                     
@@ -296,29 +312,29 @@ const Home: FunctionComponent<HomeProps> = () => {
                         return (
                           <div className="d-flex gap-2">
                             <button
-                              className="btn btn-primary btn-add-to-cart flex-grow-1 btn-sm btn-md-regular"
+                              className="btn btn-primary btn-add-to-cart home-add-to-cart-btn flex-grow-1 btn-sm btn-md-regular"
                               onClick={() => handleAddToCart(product)}
                               disabled={product.quantity === 0 || isUpdating}
                             >
                               {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
                             </button>
                             {currentUser?.isAdmin && (
-                              <>
+                              <div className="home-admin-controls">
                                 <button
-                                  className="btn btn-outline-secondary btn-sm"
+                                  className="btn btn-outline-secondary btn-sm home-admin-btn"
                                   onClick={() => handleEditProduct(productId)}
                                   title="Edit Product"
                                 >
                                   <i className="bi bi-pencil"></i>
                                 </button>
                                 <button
-                                  className="btn btn-outline-danger btn-sm"
+                                  className="btn btn-outline-danger btn-sm home-admin-btn"
                                   onClick={() => handleDeleteProduct(productId)}
                                   title="Delete Product"
                                 >
                                   <i className="bi bi-trash"></i>
                                 </button>
-                              </>
+                              </div>
                             )}
                           </div>
                         );
@@ -326,20 +342,20 @@ const Home: FunctionComponent<HomeProps> = () => {
                         // Show quantity controls
                         return (
                           <div className="d-flex gap-2">
-                            <div className="d-flex align-items-center border rounded flex-grow-1">
+                            <div className="d-flex align-items-center border rounded flex-grow-1 home-quantity-controls">
                               <button
-                                className="btn btn-outline-secondary btn-sm border-0"
+                                className="btn btn-outline-secondary btn-sm border-0 home-quantity-btn"
                                 onClick={() => handleDecreaseQuantity(product)}
                                 disabled={isUpdating}
                                 style={{ borderRadius: '0.375rem 0 0 0.375rem' }}
                               >
                                 <i className="bi bi-dash"></i>
                               </button>
-                              <span className="px-3 text-center" style={{ minWidth: '40px', backgroundColor: '#f8f9fa' }}>
+                              <span className="px-3 text-center home-quantity-display" style={{ minWidth: '40px', backgroundColor: '#f8f9fa' }}>
                                 {isUpdating ? '...' : cartQuantity}
                               </span>
                               <button
-                                className="btn btn-outline-secondary btn-sm border-0"
+                                className="btn btn-outline-secondary btn-sm border-0 home-quantity-btn"
                                 onClick={() => handleIncreaseQuantity(product)}
                                 disabled={isUpdating || cartQuantity >= (product.quantity || 0)}
                                 style={{ borderRadius: '0 0.375rem 0.375rem 0' }}
@@ -348,22 +364,22 @@ const Home: FunctionComponent<HomeProps> = () => {
                               </button>
                             </div>
                             {currentUser?.isAdmin && (
-                              <>
+                              <div className="home-admin-controls">
                                 <button
-                                  className="btn btn-outline-secondary btn-sm"
+                                  className="btn btn-outline-secondary btn-sm home-admin-btn"
                                   onClick={() => handleEditProduct(productId)}
                                   title="Edit Product"
                                 >
                                   <i className="bi bi-pencil"></i>
                                 </button>
                                 <button
-                                  className="btn btn-outline-danger btn-sm"
+                                  className="btn btn-outline-danger btn-sm home-admin-btn"
                                   onClick={() => handleDeleteProduct(productId)}
                                   title="Delete Product"
                                 >
                                   <i className="bi bi-trash"></i>
                                 </button>
-                              </>
+                              </div>
                             )}
                           </div>
                         );
@@ -376,8 +392,106 @@ const Home: FunctionComponent<HomeProps> = () => {
           ))}
         </div>
 
+        {/* Mobile-optimized product grid */}
+        <div className="d-md-none">
+          {products.map((product) => (
+            <div key={`mobile-${product.id}`} className="mb-4">
+              <div className="card home-product-card h-100">
+                <div className="home-product-image-container">
+                  <img
+                    src={product.image || "https://via.placeholder.com/300x200?text=No+Image"}
+                    className="card-img-top home-product-image"
+                    alt={product.name}
+                  />
+                  <div className="home-product-image-overlay"></div>
+                </div>
+                <div className="card-body home-product-body">
+                  <h5 className="card-title home-product-title">{product.name}</h5>
+                  <p className="card-text home-product-category">{product.category}</p>
+                  <p className="card-text text-secondary mb-3 small">
+                    {product.description?.length > 100 
+                      ? product.description.substring(0, 100) + "..."
+                      : product.description}
+                  </p>
+                  
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="home-product-price">${product.price.toFixed(2)}</span>
+                    {product.quantity !== undefined && (
+                      <small className={`home-product-stock ${product.quantity <= 5 ? 'home-stock-low' : product.quantity <= 20 ? 'home-stock-medium' : 'home-stock-good'}`}>
+                        Stock: {product.quantity}
+                      </small>
+                    )}
+                  </div>
+
+                  {currentUser?.isAdmin && (
+                    <div className="home-admin-controls mb-3">
+                      <button
+                        className="btn btn-outline-secondary home-admin-btn me-2"
+                        onClick={() => handleEditProduct(product._id || product.id!)}
+                        title="Edit Product"
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        className="btn btn-outline-danger home-admin-btn"
+                        onClick={() => handleDeleteProduct(product._id || product.id!)}
+                        title="Delete Product"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  )}
+                  
+                  <div className="home-cart-controls">
+                    {(() => {
+                      const productId = product._id || product.id!;
+                      const cartQuantity = getProductQuantityInCart(productId);
+                      const isUpdating = updatingQuantity === productId;
+                      
+                      if (cartQuantity === 0) {
+                        return (
+                          <button
+                            className="btn btn-primary home-add-to-cart-btn"
+                            onClick={() => handleAddToCart(product)}
+                            disabled={product.quantity === 0 || isUpdating}
+                          >
+                            {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <div className="home-quantity-controls">
+                            <button
+                              className="btn home-quantity-btn"
+                              onClick={() => handleDecreaseQuantity(product)}
+                              disabled={isUpdating}
+                            >
+                              <i className="bi bi-dash"></i>
+                            </button>
+                            <span className="home-quantity-display">
+                              {isUpdating ? '...' : cartQuantity}
+                            </span>
+                            <button
+                              className="btn home-quantity-btn"
+                              onClick={() => handleIncreaseQuantity(product)}
+                              disabled={isUpdating || cartQuantity >= (product.quantity || 0)}
+                            >
+                              <i className="bi bi-plus"></i>
+                            </button>
+                          </div>
+                        );
+                      }
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {!loading && !error && products.length === 0 && (
-          <div className="empty-state text-center">
+          <div className="home-empty-state">
+            <div className="home-empty-icon">📦</div>
             <h4 className="text-muted">No products available</h4>
             <p className="text-muted">Check back later for new products!</p>
           </div>

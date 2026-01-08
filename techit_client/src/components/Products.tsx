@@ -9,6 +9,7 @@ import UpdateProductModal from "./UpdateProductModal";
 import { addToCart, updateCartQuantity, getUserCart } from "../services/cartsService";
 import User from "../interfaces/User";
 import Cart, { CartProduct } from "../interfaces/Cart";
+import "./Products.css";
 
 interface ProductsProps {}
 
@@ -165,37 +166,71 @@ const Products: FunctionComponent<ProductsProps> = () => {
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h4 className="display-4 text-center">PRODUCTS</h4>
-        {isAdmin && (
-          <button
-            className="btn btn-success mb-3"
-            onClick={() => setShowAdd(true)}
-          >
-            <i className="fa-solid fa-plus"></i> Add product
-          </button>
-        )}
+      <div className="container-fluid px-2 px-sm-3 px-md-4 py-3">
         <div className="row">
+          <div className="col-12 text-center mb-3 mb-md-4">
+            <h2 className="display-6 display-md-4 mb-3">PRODUCTS</h2>
+            {isAdmin && (
+              <button
+                className="btn btn-success mb-3 btn-sm btn-md-regular"
+                onClick={() => setShowAdd(true)}
+              >
+                <i className="fa-solid fa-plus me-1 me-md-2"></i>
+                <span className="d-none d-sm-inline">Add </span>Product
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="row g-2 g-sm-3 g-md-4">
           {products.length ? (
             products.map((product: Product) => (
-              <div
-                className="card col-md-3"
-                key={product._id || product.id}
-                style={{ width: "18rem" }}
-              >
-                <div className="card-header">{product.category}</div>
-                <img
-                  src={product.image}
-                  className="card-img-top"
-                  alt={product.name}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text">{product.description}</p>
-                  <p className="card-text text-success">{product.price}₪</p>
-                  {!product.quantity && (
-                    <p className="text-center text-danger">Out of stock!</p>
-                  )}
+              <div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={product._id || product.id}>
+                <div
+                  className="card h-100 shadow-sm border-0 product-card"
+                  style={{ borderRadius: '0.75rem', overflow: 'hidden' }}
+                >
+                  <div className="position-relative">
+                    <div className="badge bg-primary position-absolute top-0 start-0 m-2 px-2 py-1" 
+                         style={{ fontSize: '0.7rem', zIndex: 1 }}>
+                      {product.category}
+                    </div>
+                    <img
+                      src={product.image || "https://via.placeholder.com/300x200?text=No+Image"}
+                      className="card-img-top product-image"
+                      alt={product.name}
+                      style={{ height: '200px', objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div className="card-body d-flex flex-column p-3 p-md-4">
+                    <div className="flex-grow-1 mb-3">
+                      <h5 className="card-title mb-2 fs-6 fs-md-5 fw-bold text-truncate" title={product.name}>
+                        {product.name}
+                      </h5>
+                      <p className="card-text text-secondary mb-2 small" 
+                         style={{ 
+                           display: '-webkit-box', 
+                           WebkitLineClamp: 2, 
+                           WebkitBoxOrient: 'vertical', 
+                           overflow: 'hidden',
+                           lineHeight: '1.4'
+                         }}>
+                        {product.description}
+                      </p>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="h5 mb-0 text-success fw-bold">{product.price}₪</span>
+                        {product.quantity !== undefined && (
+                          <small className="text-muted">
+                            <span className="d-none d-sm-inline">Stock: </span>{product.quantity}
+                          </small>
+                        )}
+                      </div>
+                      {!product.quantity && (
+                        <div className="alert alert-warning py-1 px-2 mb-2 small text-center">
+                          <i className="fa-solid fa-exclamation-triangle me-1"></i>
+                          Out of stock!
+                        </div>
+                      )}
+                    </div>
                   
                   {/* Cart functionality */}
                   <div style={{ minHeight: '40px' }} className="d-flex align-items-center justify-content-center mb-2">
@@ -247,35 +282,48 @@ const Products: FunctionComponent<ProductsProps> = () => {
                   
                   {/* Admin buttons */}
                   {isAdmin && (
-                    <>
+                    <div className="mt-2 d-flex gap-1 gap-sm-2">
                       <button
-                        className="btn btn-warning mx-1 px-2"
+                        className="btn btn-outline-warning btn-sm flex-fill"
                         onClick={() => {
                           setShowUpdate(true);
                           setProductId(product.id as string);
                         }}
                       >
                         <i className="fa-solid fa-pen"></i>
+                        <span className="d-none d-sm-inline ms-1">Edit</span>
                       </button>
                       <button
-                        className="btn btn-danger px-2"
+                        className="btn btn-outline-danger btn-sm flex-fill"
                         onClick={() => {
                           setShowDelete(true);
                           setProductId(product.id as string);
                         }}
                       >
                         <i className="fa-solid fa-trash"></i>
+                        <span className="d-none d-sm-inline ms-1">Delete</span>
                       </button>
-                    </>
+                    </div>
                   )}
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <p>No products</p>
+            <div className="col-12">
+              <div className="text-center py-5 my-4">
+                <div className="mb-3">
+                  <i className="fa-solid fa-box-open fa-3x text-muted"></i>
+                </div>
+                <h4 className="text-muted mb-2">No products available</h4>
+                <p className="text-muted mb-0">Check back later for new products!</p>
+              </div>
+            </div>
           )}
         </div>
       </div>
+      
+      {/* Modals */}
       <AddProductModal
         show={showAdd}
         onHide={() => {

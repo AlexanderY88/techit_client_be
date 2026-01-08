@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Products from "./components/Products";
 import Cart from "./components/Cart";
+import './mobile-responsive.css';
 
 function App() {
   return (
