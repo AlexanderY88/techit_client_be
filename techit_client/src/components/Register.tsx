@@ -10,24 +10,23 @@ interface RegisterProps {}
 const Register: FunctionComponent<RegisterProps> = () => {
   const navigate = useNavigate();
   const formik = useFormik({
-    initialValues: { email: "", password: "", name: "" },
+    initialValues: { email: "", password: "", name: "", isAdmin: false },
     validationSchema: yup.object({
       email: yup.string().email().required().min(5),
       password: yup.string().required().min(8),
       name: yup.string().required().min(2),
     }),
     onSubmit: (values) => {
-      addUser({ ...values, isAdmin: false })
+      addUser(values)
         .then((res) => {
           navigate("/home");
-          sessionStorage.setItem("userId", res.data.id);
-          createCart(res.data.id)
-            .then(() => {
-              console.log("Cart created successfully!");
-            })
-            .catch((err) => console.log(err));
+          sessionStorage.setItem("token", res.data);
+          // Cart is created automatically by the server during registration
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          alert("Registration failed. Please try again.");
+        });
     },
   });
   return (
@@ -83,6 +82,21 @@ const Register: FunctionComponent<RegisterProps> = () => {
               <p className="text-danger">{formik.errors.password}</p>
             )}
           </div>
+          
+          <div className="form-check mb-3">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="isAdmin"
+              name="isAdmin"
+              checked={formik.values.isAdmin}
+              onChange={formik.handleChange}
+            />
+            <label className="form-check-label" htmlFor="isAdmin">
+              Register as Admin
+            </label>
+          </div>
+          
           <button
             type="submit"
             className="btn btn-primary w-100 my-3 "

@@ -14,13 +14,21 @@ const productSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            required: true
+            required: true,
+            minlength: 2
         },
         description: {
-            type: String
+            type: String,
+            minlength: 2
         },
         image: {
-            type: String
+            type: String,
+            default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiYEyBPPDCMMNpynVmbDTjWZjjndDt1Ap8lQ&s"
+        },
+        quantity: {
+            type: Number,
+            default: 0,
+            min: 0
         }
     }
 )

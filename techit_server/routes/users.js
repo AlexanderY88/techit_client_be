@@ -6,6 +6,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Cart = require("../models/Cart");
 const _ = require("lodash");
+const auth = require("../middlewares/auth");
+
+// Test endpoint without auth
+router.get("/test", async (req, res) => {
+    res.status(200).json({ message: "Users API is working!", timestamp: new Date() });
+});
 
 const checkRegisterBody = joi.object({
         name: joi.string().min(3).max(30).required(),
@@ -65,6 +71,18 @@ router.post("/login", async (req, res) => {
         res.status(200).send(token);
     } catch (err) {
         console.log(err);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+// get current user details (requires auth)
+router.get('/me', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.payload._id);
+        if (!user) return res.status(404).send("User not found");
+        res.status(200).json(_.omit(user.toObject(), ['password', '__v']));
+    } catch (error) {
+        console.log(error);
         res.status(500).send("Internal Server Error");
     }
 })

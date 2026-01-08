@@ -7,11 +7,18 @@ const cartSchema = new mongoose.Schema({
         required: true,
         ref: 'users'
     },
-    products: {
-        type: Array,
-        required: true,
-        default: []
-    },
+    products: [{
+        productId: {
+            type: String,
+            required: true
+        },
+        quantity: {
+            type: Number,
+            required: true,
+            default: 1,
+            min: 1
+        }
+    }],
     isActive: {
         type: Boolean,
         default: true,

@@ -17,14 +17,16 @@ const Login: FunctionComponent<LoginProps> = () => {
     onSubmit: (values) => {
       checkUser(values)
         .then((res) => {
-          if (res.data.length) {
+          // Backend returns a JWT token directly
+          const token = res.data;
+          if (token) {
             navigate("/home");
-            sessionStorage.setItem("userId", res.data[0].id);
-          } else {
-            alert("Wrong email or password");
+            sessionStorage.setItem("token", token);
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+        });
     },
   });
   return (

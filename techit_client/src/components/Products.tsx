@@ -2,11 +2,13 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { getAllProducts } from "../services/productsService";
 import Product from "../interfaces/Product";
-import { getUserById } from "../services/usersService";
+import { getUserById, getUserFromToken } from "../services/usersService";
 import AddProductModal from "./AddProductModal";
 import DeleteProductModal from "./DeleteProductModal";
 import UpdateProductModal from "./UpdateProductModal";
-import { addToCart } from "../services/cartsService";
+import { addToCart, updateCartQuantity, getUserCart } from "../services/cartsService";
+import User from "../interfaces/User";
+import Cart, { CartProduct } from "../interfaces/Cart";
 
 interface ProductsProps {}
 
@@ -18,13 +20,29 @@ const Products: FunctionComponent<ProductsProps> = () => {
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
   const [productId, setProductId] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
+  const [updatingQuantity, setUpdatingQuantity] = useState<string | null>(null);
 
   useEffect(() => {
-    getUserById()
-      .then((res) => {
-        setIsAdmin(res.data.isAdmin);
-      })
-      .catch((err) => console.log(err));
+    // Get user info from token
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      const userFromToken = getUserFromToken();
+      if (userFromToken) {
+        setCurrentUser(userFromToken);
+        setIsAdmin(userFromToken.isAdmin);
+        
+        // Load user cart
+        getUserCart()
+          .then((cartResponse) => {
+            if (cartResponse.data && cartResponse.data.length > 0) {
+              setCartProducts(cartResponse.data[0].products || []);
+            }
+          })
+          .catch((err) => console.log("Cart load error:", err));
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -36,6 +54,113 @@ const Products: FunctionComponent<ProductsProps> = () => {
   }, [productsChanged]);
 
   const refresh = () => setProductsChanged(!productsChanged);
+
+  // Helper function to get product quantity in cart
+  const getProductQuantityInCart = (productId: string): number => {
+    const cartProduct = cartProducts.find(cp => cp.productId === productId);
+    return cartProduct ? cartProduct.quantity : 0;
+  };
+
+  // Add to cart functionality
+  const handleAddToCart = async (product: Product) => {
+    if (!currentUser) return;
+    
+    const productId = product._id || product.id!;
+    setUpdatingQuantity(productId);
+    
+    try {
+      await addToCart(productId, 1);
+      
+      // Update local cart state
+      setCartProducts(prevCartProducts => {
+        const existingIndex = prevCartProducts.findIndex(cp => cp.productId === productId);
+        if (existingIndex > -1) {
+          const updatedCartProducts = [...prevCartProducts];
+          updatedCartProducts[existingIndex].quantity += 1;
+          return updatedCartProducts;
+        } else {
+          return [...prevCartProducts, { productId, quantity: 1 }];
+        }
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setUpdatingQuantity(null);
+    }
+  };
+
+  // Increase quantity
+  const handleIncreaseQuantity = async (product: Product) => {
+    const productId = product._id || product.id!;
+    const currentQuantity = getProductQuantityInCart(productId);
+    
+    if (currentQuantity >= (product.quantity || 0)) return;
+    
+    setUpdatingQuantity(productId);
+    try {
+      await updateCartQuantity(productId, currentQuantity + 1);
+      
+      setCartProducts(prevCartProducts => {
+        const updatedCartProducts = [...prevCartProducts];
+        const existingIndex = updatedCartProducts.findIndex(cp => cp.productId === productId);
+        if (existingIndex > -1) {
+          updatedCartProducts[existingIndex].quantity = currentQuantity + 1;
+        } else {
+          updatedCartProducts.push({ productId, quantity: currentQuantity + 1 });
+        }
+        return updatedCartProducts;
+      });
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    } finally {
+      setUpdatingQuantity(null);
+    }
+  };
+
+  // Decrease quantity
+  const handleDecreaseQuantity = async (product: Product) => {
+    const productId = product._id || product.id!;
+    const currentQuantity = getProductQuantityInCart(productId);
+    
+    if (currentQuantity <= 1) {
+      await handleRemoveFromCart(productId);
+      return;
+    }
+    
+    setUpdatingQuantity(productId);
+    try {
+      await updateCartQuantity(productId, currentQuantity - 1);
+      
+      setCartProducts(prevCartProducts => {
+        const updatedCartProducts = [...prevCartProducts];
+        const existingIndex = updatedCartProducts.findIndex(cp => cp.productId === productId);
+        if (existingIndex > -1) {
+          updatedCartProducts[existingIndex].quantity = currentQuantity - 1;
+        }
+        return updatedCartProducts;
+      });
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    } finally {
+      setUpdatingQuantity(null);
+    }
+  };
+
+  // Remove from cart
+  const handleRemoveFromCart = async (productId: string) => {
+    setUpdatingQuantity(productId);
+    try {
+      await updateCartQuantity(productId, 0);
+      
+      setCartProducts(prevCartProducts => 
+        prevCartProducts.filter(cp => cp.productId !== productId)
+      );
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    } finally {
+      setUpdatingQuantity(null);
+    }
+  };
 
   return (
     <>
@@ -55,7 +180,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
             products.map((product: Product) => (
               <div
                 className="card col-md-3"
-                key={product.id}
+                key={product._id || product.id}
                 style={{ width: "18rem" }}
               >
                 <div className="card-header">{product.category}</div>
@@ -71,19 +196,56 @@ const Products: FunctionComponent<ProductsProps> = () => {
                   {!product.quantity && (
                     <p className="text-center text-danger">Out of stock!</p>
                   )}
-                  <button
-                    className="btn btn-primary"
-                    disabled={!product.quantity}
-                    onClick={() => {
-                      addToCart(product)
-                        .then(() => {
-                          alert("Product was added to cart successfully!");
-                        })
-                        .catch((err) => console.log(err));
-                    }}
-                  >
-                    <i className="fa-solid fa-cart-shopping"></i> Add to Cart
-                  </button>
+                  
+                  {/* Cart functionality */}
+                  <div style={{ minHeight: '40px' }} className="d-flex align-items-center justify-content-center mb-2">
+                    {(() => {
+                      const productId = product._id || product.id!;
+                      const cartQuantity = getProductQuantityInCart(productId);
+                      const isUpdating = updatingQuantity === productId;
+                      
+                      if (cartQuantity === 0) {
+                        // Show Add to Cart button
+                        return (
+                          <button
+                            className="btn btn-primary w-100"
+                            disabled={!product.quantity || isUpdating || !currentUser}
+                            onClick={() => handleAddToCart(product)}
+                          >
+                            <i className="fa-solid fa-cart-shopping"></i> 
+                            {!currentUser ? " Login to Add" : " Add to Cart"}
+                          </button>
+                        );
+                      } else {
+                        // Show quantity controls
+                        return (
+                          <div className="d-flex align-items-center justify-content-center w-100">
+                            <button
+                              className="btn btn-outline-secondary btn-sm"
+                              onClick={() => handleDecreaseQuantity(product)}
+                              disabled={isUpdating}
+                              style={{ width: '36px', height: '36px' }}
+                            >
+                              <i className="fa-solid fa-minus"></i>
+                            </button>
+                            <span className="mx-3 fw-bold" style={{ minWidth: '30px', textAlign: 'center' }}>
+                              {isUpdating ? '...' : cartQuantity}
+                            </span>
+                            <button
+                              className="btn btn-outline-secondary btn-sm"
+                              onClick={() => handleIncreaseQuantity(product)}
+                              disabled={isUpdating || cartQuantity >= (product.quantity || 0)}
+                              style={{ width: '36px', height: '36px' }}
+                            >
+                              <i className="fa-solid fa-plus"></i>
+                            </button>
+                          </div>
+                        );
+                      }
+                    })()}
+                  </div>
+                  
+                  {/* Admin buttons */}
                   {isAdmin && (
                     <>
                       <button
